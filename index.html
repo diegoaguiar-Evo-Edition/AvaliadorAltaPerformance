@@ -1,6 +1,137 @@
-async function perguntar(){
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Agente Avaliador</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+#login, #chatContainer{
+background:#1e293b;
+padding:30px;
+border-radius:12px;
+width:420px;
+}
+
+#chat{
+height:300px;
+overflow-y:auto;
+background:#0b1220;
+padding:15px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+border:none;
+}
+
+button{
+margin-top:10px;
+padding:12px;
+width:100%;
+background:#22c55e;
+border:none;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.msgUser{
+margin:8px 0;
+color:#38bdf8;
+}
+
+.msgBot{
+margin:8px 0;
+color:#22c55e;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="login">
+
+<h2>Acesso ao Agente</h2>
+
+<input id="senha" type="password" placeholder="Digite a senha">
+
+<button onclick="entrar()">Entrar</button>
+
+</div>
+
+<div id="chatContainer" style="display:none">
+
+<h2>Agente Avaliador</h2>
+
+<div id="chat"></div>
+
+<input id="pergunta" placeholder="Digite sua mensagem">
+
+<button onclick="enviar()">Enviar</button>
+
+</div>
+
+<script>
+
+const senhaCorreta = "123456"
+
+function entrar(){
+
+let senha = document.getElementById("senha").value
+
+if(senha === senhaCorreta){
+
+document.getElementById("login").style.display="none"
+document.getElementById("chatContainer").style.display="block"
+
+}else{
+
+alert("Senha incorreta")
+
+}
+
+}
+
+document.getElementById("pergunta").addEventListener("keypress", function(e){
+if(e.key === "Enter"){
+enviar()
+}
+})
+
+async function enviar(){
 
 let pergunta = document.getElementById("pergunta").value
+
+if(!pergunta) return
+
+const chat = document.getElementById("chat")
+
+chat.innerHTML += `<div class="msgUser"><b>Você:</b> ${pergunta}</div>`
+
+document.getElementById("pergunta").value=""
+
+chat.innerHTML += `<div class="msgBot">Digitando...</div>`
+
+chat.scrollTop = chat.scrollHeight
 
 const response = await fetch("/api/chat",{
 method:"POST",
@@ -14,8 +145,15 @@ pergunta:pergunta
 
 const data = await response.json()
 
-document.getElementById("resposta").innerHTML =
-"<p><b>Pergunta:</b> "+pergunta+"</p>"+
-"<p><b>Agente:</b> "+data.resposta+"</p>"
+chat.lastChild.remove()
+
+chat.innerHTML += `<div class="msgBot"><b>Agente:</b> ${data.resposta}</div>`
+
+chat.scrollTop = chat.scrollHeight
 
 }
+
+</script>
+
+</body>
+</html>
