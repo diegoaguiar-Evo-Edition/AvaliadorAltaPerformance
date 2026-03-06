@@ -1,102 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Agente Avaliador</title>
-<style>
-
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
-
-#login,#chat{
-background:#1e293b;
-padding:30px;
-border-radius:10px;
-width:400px;
-}
-
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-}
-
-button{
-margin-top:10px;
-padding:10px;
-width:100%;
-background:#22c55e;
-border:none;
-color:white;
-cursor:pointer;
-}
-
-</style>
-</head>
-
-<body>
-
-<div id="login">
-
-<h2>Acesso Avaliador</h2>
-
-<input id="senha" type="password" placeholder="Digite a senha">
-
-<button onclick="entrar()">Entrar</button>
-
-</div>
-
-<div id="chat" style="display:none">
-
-<h2>Agente Avaliador</h2>
-
-<div id="resposta"></div>
-
-<input id="pergunta" placeholder="Digite sua pergunta">
-
-<button onclick="perguntar()">Enviar</button>
-
-</div>
-
-<script>
-
-const senhaCorreta = "123456"
-
-function entrar(){
-
-let senha = document.getElementById("senha").value
-
-if(senha === senhaCorreta){
-
-document.getElementById("login").style.display="none"
-document.getElementById("chat").style.display="block"
-
-}else{
-
-alert("Senha incorreta")
-
-}
-
-}
-
-function perguntar(){
+async function perguntar(){
 
 let pergunta = document.getElementById("pergunta").value
 
+const response = await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+pergunta:pergunta
+})
+})
+
+const data = await response.json()
+
 document.getElementById("resposta").innerHTML =
 "<p><b>Pergunta:</b> "+pergunta+"</p>"+
-"<p><b>Agente:</b> Em breve responderá com IA.</p>"
+"<p><b>Agente:</b> "+data.resposta+"</p>"
 
 }
-
-</script>
-
-</body>
-</html>
